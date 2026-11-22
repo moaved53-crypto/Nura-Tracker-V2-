@@ -1,0 +1,2693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0F172A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="NURA" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%236366F1'/%3E%3Cstop offset='100%25' stop-color='%23EC4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='18' fill='url(%23g)'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='sans-serif' font-weight='800' font-size='34' fill='white'%3EN%3C/text%3E%3C/svg%3E" />
+  <title>NURA — Daily &amp; Backlog Tracker</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --indigo-50: #eef2ff;
+      --indigo-100: #e0e7ff;
+      --indigo-200: #c7d2fe;
+      --indigo-300: #a5b4fc;
+      --indigo-500: #6366f1;
+      --indigo-600: #4f46e5;
+      --indigo-700: #4338ca;
+      --indigo-900: #312e81;
+      --emerald-50: #ecfdf5;
+      --emerald-100: #d1fae5;
+      --emerald-200: #a7f3d0;
+      --emerald-500: #10b981;
+      --emerald-600: #059669;
+      --emerald-700: #047857;
+      --emerald-900: #064e3b;
+      --rose-50: #fff1f2;
+      --rose-100: #ffe4e6;
+      --rose-200: #fecdd3;
+      --rose-500: #f43f5e;
+      --rose-600: #e11d48;
+      --rose-700: #be123c;
+      --rose-900: #881337;
+      --amber-50: #fffbeb;
+      --amber-100: #fef3c7;
+      --amber-200: #fde68a;
+      --amber-300: #fcd34d;
+      --amber-400: #fbbf24;
+      --amber-800: #92400e;
+      --amber-900: #78350f;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--slate-100);
+      color: var(--slate-900);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: 5.5rem;
+      line-height: 1.45;
+    }
+    @media (min-width: 640px) {
+      body { padding-bottom: 2rem; }
+    }
+    button, input, select { font-family: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+    .hidden { display: none !important; }
+    .task-checkbox:checked + span {
+      text-decoration: line-through;
+      color: var(--slate-500);
+    }
+
+    /* Header */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--slate-900);
+      color: #fff;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.12);
+    }
+    .container {
+      max-width: 56rem;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    .header-top {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 0;
+    }
+    .brand-logo {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(99,102,241,0.35);
+      border: 2px solid rgba(255,255,255,0.2);
+      flex-shrink: 0;
+    }
+    .brand-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      background: linear-gradient(to right, #a5b4fc, #e9d5ff, #f9a8d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .exam-badge-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.12);
+      color: var(--slate-200);
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: background 0.15s;
+    }
+    .exam-badge-btn:hover { background: rgba(255,255,255,0.22); }
+    .exam-edit-input {
+      width: 6.5rem;
+      padding: 0.12rem 0.45rem;
+      border-radius: 0.4rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: #fff;
+      color: var(--slate-900);
+      border: 1px solid var(--indigo-300);
+      outline: none;
+    }
+    .exam-save-btn {
+      padding: 0.15rem 0.45rem;
+      border-radius: 0.4rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: var(--indigo-600);
+      color: #fff;
+    }
+    .brand-sub {
+      font-size: 0.68rem;
+      color: var(--slate-400);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-shrink: 0;
+    }
+    .streak-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.625rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: rgba(251,191,36,0.15);
+      color: var(--amber-300);
+      border: 1px solid rgba(251,191,36,0.3);
+    }
+    .btn-save-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.28rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--emerald-500);
+      color: #fff;
+      transition: background 0.15s;
+    }
+    .btn-save-top:hover { background: var(--emerald-600); }
+    .btn-pdf-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.28rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--rose-500);
+      color: #fff;
+      transition: background 0.15s;
+    }
+    .btn-pdf-top:hover { background: var(--rose-600); }
+
+    /* Desktop Tabs */
+    .desktop-nav {
+      display: none;
+      border-top: 1px solid var(--slate-800);
+      background: rgba(15,23,42,0.96);
+    }
+    @media (min-width: 640px) {
+      .desktop-nav { display: block; }
+    }
+    .desktop-nav-inner {
+      display: flex;
+      gap: 0.5rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+    .nav-tab-btn {
+      padding: 0.38rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--slate-300);
+      transition: all 0.15s;
+    }
+    .nav-tab-btn:hover { background: var(--slate-800); }
+    .nav-tab-btn.active {
+      background: var(--indigo-600);
+      color: #fff;
+    }
+
+    /* Main Content */
+    .main-wrap {
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+    }
+    .space-y-5 > * + * { margin-top: 1.25rem; }
+    .space-y-4 > * + * { margin-top: 1rem; }
+    .space-y-3 > * + * { margin-top: 0.75rem; }
+    .space-y-2 > * + * { margin-top: 0.5rem; }
+
+    /* Cards & Sections */
+    .card {
+      background: #fff;
+      border-radius: 1rem;
+      border: 1px solid var(--slate-200);
+      padding: 1rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    @media (min-width: 640px) {
+      .card { padding: 1.25rem; }
+    }
+    .section-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    @media (min-width: 640px) {
+      .section-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+    .eyebrow {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--indigo-600);
+      display: block;
+    }
+    .h2-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+    .sub-desc {
+      font-size: 0.75rem;
+      color: var(--slate-500);
+    }
+
+    /* Date Controls */
+    .date-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--slate-100);
+      padding: 0.25rem;
+      border-radius: 0.75rem;
+      align-self: flex-start;
+    }
+    .btn-icon-nav {
+      padding: 0.35rem 0.7rem;
+      border-radius: 0.5rem;
+      background: #fff;
+      color: var(--slate-700);
+      border: 1px solid var(--slate-200);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .btn-icon-nav:hover { background: var(--slate-50); }
+    .date-input {
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: 0.5rem;
+      padding: 0.35rem 0.6rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--slate-800);
+    }
+    .btn-today {
+      padding: 0.42rem 0.75rem;
+      border-radius: 0.5rem;
+      background: var(--indigo-600);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .btn-today:hover { background: var(--indigo-700); }
+
+    /* Progress Bar */
+    .progress-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.375rem;
+      font-size: 0.75rem;
+    }
+    .progress-track {
+      width: 100%;
+      background: var(--slate-100);
+      height: 0.625rem;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--indigo-600), var(--emerald-500));
+      border-radius: 9999px;
+      transition: width 0.3s ease;
+    }
+
+    /* Grids */
+    .subjects-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 640px) {
+      .subjects-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .subjects-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .routine-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    @media (min-width: 640px) {
+      .routine-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .routine-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* Subject Card */
+    .subject-card {
+      background: #fff;
+      border-radius: 1rem;
+      border: 1px solid var(--slate-200);
+      border-top-width: 4px;
+      padding: 1rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.75rem;
+      transition: opacity 0.2s;
+    }
+    .subject-card.off-today {
+      opacity: 0.55;
+      background: var(--slate-50);
+    }
+    .border-t-blue { border-top-color: #2563eb; }
+    .border-t-violet { border-top-color: #7c3aed; }
+    .border-t-emerald { border-top-color: #059669; }
+    .border-t-teal { border-top-color: #0d9488; }
+    .border-t-rose { border-top-color: #e11d48; }
+    .border-t-amber { border-top-color: #f59e0b; }
+
+    .badge-blue { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .badge-violet { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; }
+    .badge-emerald { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+    .badge-teal { background: #f0fdfa; color: #0f766e; border: 1px solid #99f6e4; }
+    .badge-rose { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+    .badge-amber { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+
+    .pill-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      flex-shrink: 0;
+    }
+
+    /* Task Row */
+    .task-box {
+      padding: 0.5rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--slate-100);
+      transition: background 0.15s;
+    }
+    .task-box:hover { background: var(--slate-50); }
+    .task-row-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.35rem;
+    }
+    .task-label-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+    .task-text {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--slate-800);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      user-select: none;
+    }
+    .mini-icon-btn {
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.35rem;
+      font-size: 0.75rem;
+      color: var(--slate-400);
+    }
+    .mini-icon-btn.edit:hover { color: var(--indigo-600); background: var(--indigo-50); }
+    .mini-icon-btn.del:hover { color: var(--rose-600); background: var(--rose-50); font-weight: 700; }
+
+    .time-subrow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      padding-left: 1.5rem;
+      margin-top: 0.35rem;
+      font-size: 0.65rem;
+      color: var(--slate-500);
+    }
+    .time-input-mini {
+      width: 2.75rem;
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: 0.25rem;
+      padding: 0.12rem 0.35rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--slate-800);
+    }
+    .unit-btn {
+      padding: 0.12rem 0.38rem;
+      border-radius: 0.25rem;
+      background: var(--slate-200);
+      color: var(--slate-700);
+      font-weight: 700;
+      font-size: 0.65rem;
+    }
+    .unit-btn:hover { background: var(--indigo-100); color: var(--indigo-700); }
+
+    /* Subject Footer Time & Add Task */
+    .sub-footer {
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--slate-100);
+    }
+    .sub-time-box {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+      padding: 0.45rem 0.6rem;
+      border-radius: 0.75rem;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      font-size: 0.7rem;
+      color: var(--slate-600);
+    }
+    .sub-time-input {
+      width: 3rem;
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: 0.3rem;
+      padding: 0.15rem 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* Forms & Inputs */
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    @media (min-width: 640px) {
+      .form-row { flex-direction: row; }
+    }
+    .text-input {
+      flex: 1;
+      min-width: 0;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 0.75rem;
+      padding: 0.5rem 0.85rem;
+      font-size: 0.8rem;
+      color: var(--slate-900);
+    }
+    .text-input:focus, .select-input:focus, .card-input:focus {
+      outline: 2px solid var(--indigo-500);
+      outline-offset: -1px;
+    }
+    .select-input {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--slate-700);
+    }
+    .btn-primary {
+      padding: 0.5rem 1rem;
+      border-radius: 0.75rem;
+      background: var(--indigo-600);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .btn-primary:hover { background: var(--indigo-700); }
+    .btn-dark {
+      padding: 0.5rem 1rem;
+      border-radius: 0.75rem;
+      background: var(--slate-900);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .btn-dark:hover { background: var(--slate-800); }
+    .btn-rose {
+      padding: 0.5rem 1rem;
+      border-radius: 0.75rem;
+      background: var(--rose-600);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .btn-rose:hover { background: var(--rose-700); }
+
+    /* Routine & Rev/Test Tile */
+    .item-tile {
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--slate-200);
+      background: rgba(248,250,252,0.75);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.5rem;
+      transition: all 0.15s;
+    }
+    .item-tile.checked-indigo {
+      border-color: var(--indigo-300);
+      background: rgba(238,242,255,0.65);
+    }
+    .item-tile.checked-rose {
+      border-color: var(--rose-300);
+      background: rgba(255,241,242,0.65);
+    }
+    .card-input {
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: 0.5rem;
+      padding: 0.38rem 0.6rem;
+      font-size: 0.85rem;
+      color: var(--slate-800);
+    }
+
+    /* Max Marks Bar */
+    .max-marks-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: 0.75rem;
+      background: var(--rose-50);
+      border: 1px solid var(--rose-200);
+      font-size: 0.75rem;
+    }
+    .max-marks-input {
+      width: 4.5rem;
+      background: #fff;
+      border: 1px solid var(--rose-300);
+      border-radius: 0.45rem;
+      padding: 0.2rem 0.45rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--rose-900);
+      text-align: center;
+    }
+
+    /* Calendar */
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.25rem;
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--slate-400);
+      text-transform: uppercase;
+    }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.375rem;
+    }
+    .cal-cell {
+      height: 3rem;
+      border-radius: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.15rem;
+      transition: background 0.15s;
+    }
+    .cal-empty { background: rgba(248,250,252,0.6); }
+    .cal-zero { background: var(--slate-100); color: var(--slate-700); }
+    .cal-zero:hover { background: var(--slate-200); }
+    .cal-partial { background: var(--amber-100); color: var(--amber-900); }
+    .cal-partial:hover { background: var(--amber-200); }
+    .cal-done { background: var(--emerald-100); color: var(--emerald-900); }
+    .cal-done:hover { background: var(--emerald-200); }
+    .cal-selected { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--indigo-600); }
+
+    /* Custom Offline Chart Container */
+    .chart-box {
+      width: 100%;
+      overflow-x: auto;
+      padding-top: 0.25rem;
+    }
+    .chart-svg {
+      width: 100%;
+      min-width: 520px;
+      height: 250px;
+      display: block;
+    }
+
+    /* Mobile Bottom Bar */
+    .mobile-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      background: #fff;
+      border-top: 1px solid var(--slate-200);
+      padding: 0.35rem 0.5rem;
+      box-shadow: 0 -4px 12px rgba(15,23,42,0.06);
+    }
+    @media (min-width: 640px) {
+      .mobile-nav { display: none; }
+    }
+    .mobile-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.25rem;
+    }
+    .mobile-tab-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.4rem 0;
+      border-radius: 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--slate-500);
+    }
+    .mobile-tab-btn.active {
+      font-weight: 700;
+      color: var(--indigo-600);
+      background: var(--indigo-50);
+    }
+
+    /* Utility Badges & Helpers */
+    .stat-pill-indigo {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--indigo-50);
+      color: var(--indigo-700);
+      border: 1px solid var(--indigo-200);
+      align-self: flex-start;
+    }
+    .stat-pill-rose {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--rose-50);
+      color: var(--rose-700);
+      border: 1px solid var(--rose-200);
+      align-self: flex-start;
+    }
+    .stat-pill-emerald {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--emerald-50);
+      color: var(--emerald-700);
+      border: 1px solid var(--emerald-200);
+      white-space: nowrap;
+    }
+    .stat-pill-amber {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--amber-50);
+      color: var(--amber-800);
+      border: 1px solid var(--amber-200);
+      align-self: flex-start;
+    }
+    .flex-between { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .flex-center { display: flex; align-items: center; gap: 0.4rem; }
+    .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .filter-btn {
+      padding: 0.35rem 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--slate-100);
+      color: var(--slate-700);
+    }
+    .filter-btn.active {
+      background: var(--slate-900);
+      color: #fff;
+    }
+    .backlog-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--slate-200);
+      background: rgba(248,250,252,0.75);
+    }
+    .btn-light {
+      padding: 0.5rem 1rem;
+      border-radius: 0.75rem;
+      background: var(--slate-100);
+      color: var(--slate-800);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .btn-light:hover { background: var(--slate-200); }
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="app-header">
+    <div class="container header-top">
+      <div class="brand-wrap">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 19V5l14 14V5" />
+          </svg>
+        </div>
+        <div style="min-width:0;">
+          <div class="brand-title-row">
+            <h1 class="brand-title">NURA</h1>
+            <span id="exam-badge-container"></span>
+          </div>
+          <p class="brand-sub">Daily Targets &bull; Routine &bull; Revision &amp; Test</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <span id="streak-badge" class="streak-pill">0 Day Streak</span>
+        <button id="quick-backup-btn" type="button" title="Save all data to Downloads" class="btn-save-top">
+          <span>&#8681; Save</span>
+        </button>
+        <button id="quick-pdf-btn" type="button" title="Download Monthly PDF Report" class="btn-pdf-top">
+          <span>PDF</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Desktop Navigation Tabs -->
+    <nav class="desktop-nav">
+      <div class="container desktop-nav-inner">
+        <button type="button" data-tab="today" class="nav-tab-btn active">Today's Tasks</button>
+        <button type="button" data-tab="backlog" class="nav-tab-btn">Backlogs</button>
+        <button type="button" data-tab="calendar" class="nav-tab-btn">Calendar</button>
+        <button type="button" data-tab="analytics" class="nav-tab-btn">Study Graph &amp; Backup</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container main-wrap space-y-5">
+    <!-- TAB 1: TODAY -->
+    <div id="tab-today" class="tab-panel space-y-5">
+      <!-- Date Bar + Daily Progress Card -->
+      <section class="card space-y-4">
+        <div class="section-header">
+          <div>
+            <span class="eyebrow">Selected Date</span>
+            <h2 id="selected-date-label" class="h2-title">Today</h2>
+          </div>
+          <div class="date-controls">
+            <button id="prev-day-btn" type="button" aria-label="Previous day" class="btn-icon-nav">&larr;</button>
+            <input id="date-picker" type="date" class="date-input" />
+            <button id="next-day-btn" type="button" aria-label="Next day" class="btn-icon-nav">&rarr;</button>
+            <button id="today-btn" type="button" class="btn-today">Today</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="progress-meta">
+            <span style="font-weight:600; color:var(--slate-500);">Daily Target Completion</span>
+            <span id="daily-progress-text" style="font-weight:700; color:var(--indigo-700);">0 / 12 Completed (0%)</span>
+          </div>
+          <div class="progress-track">
+            <div id="daily-progress-bar" class="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Subjects Grid -->
+      <section id="subjects-grid" class="subjects-grid">
+        <!-- Populated by JS -->
+      </section>
+
+      <!-- Add New Subject -->
+      <form id="add-subject-form" class="card form-row" style="padding:0.85rem;">
+        <input id="new-subject-name" type="text" placeholder="+ Naya Subject add karein (e.g., Organic Chem, Zoology Sem-5)..." class="text-input" required />
+        <button type="submit" class="btn-primary">+ Add Subject</button>
+      </form>
+
+      <!-- Daily Routine & Effective Study Hours -->
+      <section class="card space-y-4">
+        <div class="section-header">
+          <div>
+            <h2 class="h2-title">Daily Routine &amp; Effective Hours</h2>
+            <p class="sub-desc">Uthne, library aane-jaane, padhai band karne ka time aur effective ghante tick karein.</p>
+          </div>
+          <span id="routine-stats" class="stat-pill-indigo">0/6 Ticked &bull; 0 hrs</span>
+        </div>
+
+        <div id="routine-grid" class="routine-grid">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="add-routine-form" class="form-row" style="padding-top:0.65rem; border-top:1px solid var(--slate-100);">
+          <input id="new-routine-label" type="text" placeholder="+ Naya routine item likhein (e.g., Afternoon Nap, Walk)..." class="text-input" required />
+          <select id="new-routine-type" class="select-input">
+            <option value="time">Time Input</option>
+            <option value="number">Hours / Number</option>
+            <option value="check">Only Tick</option>
+          </select>
+          <button type="submit" class="btn-dark">+ Add Routine</button>
+        </form>
+      </section>
+
+      <!-- Daily Revision / Test Section -->
+      <section class="card space-y-4">
+        <div class="section-header">
+          <div>
+            <h2 class="h2-title">Daily Revision / Test</h2>
+            <p class="sub-desc">Daily revision aur test marks tick karein — Test Marks ka separate graph automatic banega.</p>
+          </div>
+          <span id="rev-test-stats" class="stat-pill-rose">0/4 Ticked &bull; Test: -</span>
+        </div>
+
+        <!-- Changeable Max Marks Setting -->
+        <div class="max-marks-bar">
+          <div style="font-weight:600; color:var(--rose-900);">
+            Test Maximum Marks (Changeable): <span style="font-weight:400; color:var(--slate-600);">Apne exam ke hisaab se badlein (e.g., 720, 300, 100)</span>
+          </div>
+          <div class="flex-center">
+            <label for="max-test-marks-input" style="font-weight:700; color:var(--rose-700);">Out of:</label>
+            <input id="max-test-marks-input" type="number" min="1" step="any" value="720" class="max-marks-input" />
+          </div>
+        </div>
+
+        <div id="rev-test-grid" class="routine-grid">
+          <!-- Populated by JS -->
+        </div>
+
+        <form id="add-rev-test-form" class="form-row" style="padding-top:0.65rem; border-top:1px solid var(--slate-100);">
+          <input id="new-rev-test-label" type="text" placeholder="+ Naya revision / test item likhein (e.g., NCERT Revision, Minor Test)..." class="text-input" required />
+          <select id="new-rev-test-type" class="select-input">
+            <option value="number">Marks / Number</option>
+            <option value="text">Topic / Note</option>
+            <option value="check">Only Tick</option>
+          </select>
+          <button type="submit" class="btn-rose">+ Add Revision / Test</button>
+        </form>
+      </section>
+    </div>
+
+    <!-- TAB 2: BACKLOG -->
+    <div id="tab-backlog" class="tab-panel hidden space-y-5">
+      <section class="card space-y-4">
+        <div class="section-header">
+          <div>
+            <h2 class="h2-title">Backlog Tracker</h2>
+            <p class="sub-desc">Jo topic ya lecture chhoot gaya ho use add karein, aur complete hone par tick karein.</p>
+          </div>
+          <span id="backlog-stats" class="stat-pill-amber">0 Pending &bull; 0 Done</span>
+        </div>
+
+        <form id="backlog-form" class="form-row">
+          <select id="backlog-subject" class="select-input">
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Zoology">Zoology</option>
+            <option value="Botany">Botany</option>
+          </select>
+          <input id="backlog-input" type="text" placeholder="e.g., Electrostatics DPP 3 ya NCERT Ch-4 reading..." class="text-input" required />
+          <button type="submit" class="btn-primary">+ Add Backlog</button>
+        </form>
+
+        <div class="flex-center">
+          <button type="button" data-filter="all" class="filter-btn active">All</button>
+          <button type="button" data-filter="pending" class="filter-btn">Pending</button>
+          <button type="button" data-filter="done" class="filter-btn">Completed</button>
+        </div>
+
+        <ul id="backlog-list" class="space-y-2" style="list-style:none;"></ul>
+        <p id="backlog-empty" class="hidden" style="font-size:0.875rem; color:var(--slate-400); text-align:center; padding:1.5rem 0;">
+          Abhi koi backlog nahi hai. Badhiya chal raha hai!
+        </p>
+      </section>
+    </div>
+
+    <!-- TAB 3: CALENDAR -->
+    <div id="tab-calendar" class="tab-panel hidden space-y-5">
+      <section class="card space-y-4">
+        <div class="flex-between">
+          <div>
+            <h2 class="h2-title">Monthly Calendar</h2>
+            <p class="sub-desc">Kisi bhi date par tap karke us din ke tasks dekhein.</p>
+          </div>
+          <div class="flex-center">
+            <button id="prev-month-btn" type="button" aria-label="Previous month" class="btn-icon-nav">&larr;</button>
+            <span id="calendar-month-label" style="font-size:0.875rem; font-weight:700; min-width:115px; text-align:center;">Month</span>
+            <button id="next-month-btn" type="button" aria-label="Next month" class="btn-icon-nav">&rarr;</button>
+          </div>
+        </div>
+
+        <div class="cal-weekdays">
+          <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+        </div>
+        <div id="calendar-grid" class="cal-grid"></div>
+
+        <div class="flex-between" style="flex-wrap:wrap; padding-top:0.75rem; border-top:1px solid var(--slate-100); font-size:0.75rem; color:var(--slate-600);">
+          <div class="flex-center" style="gap:0.75rem;">
+            <span class="flex-center"><span style="width:10px; height:10px; border-radius:99px; background:var(--emerald-500); display:inline-block;"></span>All Done</span>
+            <span class="flex-center"><span style="width:10px; height:10px; border-radius:99px; background:var(--amber-400); display:inline-block;"></span>Partial</span>
+            <span class="flex-center"><span style="width:10px; height:10px; border-radius:99px; background:var(--slate-200); display:inline-block;"></span>0 Done</span>
+          </div>
+          <span id="month-summary-badge" style="font-weight:700; color:var(--indigo-700);">0 hrs this month</span>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 4: ANALYTICS & BACKUP -->
+    <div id="tab-analytics" class="tab-panel hidden space-y-5">
+      <!-- Graph 1: Effective Study Hours -->
+      <section class="card space-y-4">
+        <div class="flex-between" style="align-items:flex-start;">
+          <div>
+            <h2 class="h2-title">Effective Study Hours vs Date</h2>
+            <p class="sub-desc">Effective Padhai tick karne par graph automatic update hota hai.</p>
+          </div>
+          <span id="chart-avg-badge" class="stat-pill-emerald">Avg: 0 hrs/day</span>
+        </div>
+        <div id="hours-chart-box" class="chart-box"></div>
+      </section>
+
+      <!-- Graph 2: Separate Test Marks Graph -->
+      <section class="card space-y-4">
+        <div class="flex-between" style="align-items:flex-start;">
+          <div>
+            <h2 class="h2-title">Test Marks vs Date</h2>
+            <p id="test-graph-subtitle" class="sub-desc">Daily Revision / Test mein Test Marks (Out of 720) add karne par sirf test marks ka separate graph update hota hai.</p>
+          </div>
+          <span id="test-chart-avg-badge" class="stat-pill-rose">Avg: 0 / 720</span>
+        </div>
+        <div id="test-chart-box" class="chart-box"></div>
+      </section>
+
+      <!-- Backup & Restore -->
+      <footer class="card section-header">
+        <div style="font-size:0.75rem; color:var(--slate-500);">
+          <span style="font-weight:700; color:var(--slate-800); display:block; font-size:0.875rem; margin-bottom:0.15rem;">Data Backup &amp; Restore</span>
+          Apna saara data (tasks, routine, revision/test, backlog) ek tap mein Downloads mein save karein.
+          <span id="last-backup-label" style="display:block; margin-top:0.15rem; font-size:0.7rem; color:var(--slate-400);">Last backup: Never</span>
+          <span id="backup-status" style="display:inline-block; margin-top:0.15rem; color:var(--emerald-700); font-weight:600;"></span>
+        </div>
+        <div class="flex-center" style="flex-wrap:wrap;">
+          <button id="pdf-btn" type="button" class="btn-rose">Download PDF</button>
+          <button id="export-btn" type="button" class="btn-light">Export Backup</button>
+          <label class="btn-primary" style="cursor:pointer;">
+            Import Backup
+            <input id="import-input" type="file" accept=".json,application/json" class="hidden" />
+          </label>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-nav">
+    <div class="mobile-nav-grid">
+      <button type="button" data-tab="today" class="mobile-tab-btn active"><span>Today</span></button>
+      <button type="button" data-tab="backlog" class="mobile-tab-btn"><span>Backlog</span></button>
+      <button type="button" data-tab="calendar" class="mobile-tab-btn"><span>Calendar</span></button>
+      <button type="button" data-tab="analytics" class="mobile-tab-btn"><span>Graph</span></button>
+    </div>
+  </nav>
+
+  <script>
+    const PHY_CHEM_TASKS = [
+      { id: 'prev_rev', label: 'Previous Lec. Rev.' },
+      { id: 'live_lec', label: 'Live Lec.' },
+      { id: 'dpp', label: 'DPP' },
+      { id: 'hw', label: 'HW' }
+    ];
+
+    const BIO_TASKS = [
+      { id: 'prev_rev', label: 'Previous Lec. Rev.' },
+      { id: 'live_lec', label: 'Live Lec.' },
+      { id: 'dpp', label: 'DPP' },
+      { id: 'hw', label: 'HW' },
+      { id: 'ncert', label: 'NCERT Reading' }
+    ];
+
+    const COLOR_PRESETS = [
+      { badge: 'badge-blue', border: 'border-t-blue' },
+      { badge: 'badge-violet', border: 'border-t-violet' },
+      { badge: 'badge-emerald', border: 'border-t-emerald' },
+      { badge: 'badge-teal', border: 'border-t-teal' },
+      { badge: 'badge-rose', border: 'border-t-rose' },
+      { badge: 'badge-amber', border: 'border-t-amber' }
+    ];
+
+    const LEGACY_BADGE_MAP = {
+      'bg-blue-50 text-blue-700 border border-blue-200': 'badge-blue',
+      'bg-violet-50 text-violet-700 border border-violet-200': 'badge-violet',
+      'bg-emerald-50 text-emerald-700 border border-emerald-200': 'badge-emerald',
+      'bg-teal-50 text-teal-700 border border-teal-200': 'badge-teal',
+      'bg-rose-50 text-rose-700 border border-rose-200': 'badge-rose',
+      'bg-amber-50 text-amber-800 border border-amber-200': 'badge-amber'
+    };
+
+    const LEGACY_BORDER_MAP = {
+      'border-t-blue-600': 'border-t-blue',
+      'border-t-violet-600': 'border-t-violet',
+      'border-t-emerald-600': 'border-t-emerald',
+      'border-t-teal-600': 'border-t-teal',
+      'border-t-rose-600': 'border-t-rose',
+      'border-t-amber-500': 'border-t-amber'
+    };
+
+    const DEFAULT_SUBJECTS = [
+      { id: 'physics', name: 'Physics', badge: 'badge-blue', border: 'border-t-blue', defaultTasks: PHY_CHEM_TASKS },
+      { id: 'chemistry', name: 'Chemistry', badge: 'badge-violet', border: 'border-t-violet', defaultTasks: PHY_CHEM_TASKS },
+      { id: 'zoology', name: 'Zoology', badge: 'badge-emerald', border: 'border-t-emerald', defaultTasks: BIO_TASKS },
+      { id: 'botany', name: 'Botany', badge: 'badge-teal', border: 'border-t-teal', defaultTasks: BIO_TASKS }
+    ];
+
+    const DEFAULT_ROUTINE_ITEMS = [
+      { id: 'wake', label: 'Uthna (Wake Up)', type: 'time' },
+      { id: 'lib_in', label: 'Ghar se Library', type: 'time' },
+      { id: 'lib_out', label: 'Library se Ghar', type: 'time' },
+      { id: 'lib_in_2', label: 'Ghar se Library (2)', type: 'time' },
+      { id: 'study_end', label: 'Padhai Band', type: 'time' },
+      { id: 'effective_hrs', label: 'Effective Padhai (Hrs)', type: 'number' }
+    ];
+
+    const DEFAULT_REV_TEST_ITEMS = [
+      { id: 'daily_rev', label: 'Daily Revision', type: 'check' },
+      { id: 'short_notes_rev', label: 'Short Notes / Formula Rev.', type: 'check' },
+      { id: 'test_topic', label: 'Test Name / Syllabus', type: 'text' },
+      { id: 'test_marks', label: 'Test Marks', type: 'number' }
+    ];
+
+    const STORAGE_KEY = 'neet_tracker_v1';
+
+    function getLocalTodayISO() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function normalizeSubjects(rawSubs) {
+      if (!Array.isArray(rawSubs)) return null;
+      return rawSubs.map((s, idx) => {
+        const preset = COLOR_PRESETS[idx % COLOR_PRESETS.length];
+        return {
+          id: s.id,
+          name: s.name,
+          badge: LEGACY_BADGE_MAP[s.badge] || (s.badge && s.badge.startsWith('badge-') ? s.badge : preset.badge),
+          border: LEGACY_BORDER_MAP[s.border] || (s.border && s.border.startsWith('border-t-') ? s.border : preset.border)
+        };
+      });
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return {
+            examTag: typeof parsed.examTag === 'string' && parsed.examTag.trim() ? parsed.examTag.trim() : 'NEET',
+            maxTestMarks: Number(parsed.maxTestMarks) > 0 ? Number(parsed.maxTestMarks) : 720,
+            dailyTasks: parsed.dailyTasks || {},
+            dailyRoutine: parsed.dailyRoutine || {},
+            dailyRevTest: parsed.dailyRevTest || {},
+            backlogs: Array.isArray(parsed.backlogs) ? parsed.backlogs : [],
+            subjectTasks: parsed.subjectTasks || null,
+            routineItems: Array.isArray(parsed.routineItems) ? parsed.routineItems : null,
+            revTestItems: Array.isArray(parsed.revTestItems) ? parsed.revTestItems : null,
+            activeSubjects: parsed.activeSubjects || {},
+            subjects: normalizeSubjects(parsed.subjects),
+            taskTimes: parsed.taskTimes || {},
+            subjectTimes: parsed.subjectTimes || {},
+            lastBackupAt: parsed.lastBackupAt || null
+          };
+        }
+      } catch (e) {}
+      return {
+        examTag: 'NEET',
+        maxTestMarks: 720,
+        dailyTasks: {},
+        dailyRoutine: {},
+        dailyRevTest: {},
+        backlogs: [],
+        subjectTasks: null,
+        routineItems: null,
+        revTestItems: null,
+        activeSubjects: {},
+        subjects: null,
+        taskTimes: {},
+        subjectTimes: {},
+        lastBackupAt: null
+      };
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    let state = loadState();
+    let selectedDate = getLocalTodayISO();
+    let viewYear = Number(selectedDate.slice(0, 4));
+    let viewMonth = Number(selectedDate.slice(5, 7)) - 1;
+    let backlogFilter = 'all';
+    let activeTab = 'today';
+    let editingTask = null;
+    let editingRoutineId = null;
+    let editingRevTestId = null;
+    let editingSubjectId = null;
+    let editingExamTag = false;
+
+    function getSubjects() {
+      if (!Array.isArray(state.subjects)) {
+        state.subjects = DEFAULT_SUBJECTS.map(s => ({ id: s.id, name: s.name, badge: s.badge, border: s.border }));
+      }
+      return state.subjects;
+    }
+
+    function getRoutineItems() {
+      if (!Array.isArray(state.routineItems)) {
+        state.routineItems = DEFAULT_ROUTINE_ITEMS.map(item => ({ ...item }));
+      }
+      return state.routineItems;
+    }
+
+    function getRevTestItems() {
+      if (!Array.isArray(state.revTestItems)) {
+        state.revTestItems = DEFAULT_REV_TEST_ITEMS.map(item => ({ ...item }));
+      }
+      return state.revTestItems;
+    }
+
+    function isSubjectActive(dateIso, subjectId) {
+      if (!state.activeSubjects) state.activeSubjects = {};
+      if (!state.activeSubjects[dateIso] || typeof state.activeSubjects[dateIso][subjectId] !== 'boolean') {
+        return true;
+      }
+      return state.activeSubjects[dateIso][subjectId];
+    }
+
+    function setSubjectActive(dateIso, subjectId, active) {
+      if (!state.activeSubjects) state.activeSubjects = {};
+      if (!state.activeSubjects[dateIso]) state.activeSubjects[dateIso] = {};
+      state.activeSubjects[dateIso][subjectId] = active;
+      saveState();
+      renderDaily();
+    }
+
+    function getDefaultSubjectTasks() {
+      const map = {};
+      getSubjects().forEach(sub => {
+        const def = DEFAULT_SUBJECTS.find(d => d.id === sub.id);
+        const base = def ? def.defaultTasks : PHY_CHEM_TASKS;
+        map[sub.id] = base.map(t => ({ ...t }));
+      });
+      return map;
+    }
+
+    function getSubjectTasks(subjectId) {
+      if (!state.subjectTasks) {
+        state.subjectTasks = getDefaultSubjectTasks();
+      }
+      if (!Array.isArray(state.subjectTasks[subjectId])) {
+        const subDef = DEFAULT_SUBJECTS.find(s => s.id === subjectId);
+        const base = subDef ? subDef.defaultTasks : PHY_CHEM_TASKS;
+        state.subjectTasks[subjectId] = base.map(t => ({ ...t }));
+      }
+      return state.subjectTasks[subjectId];
+    }
+
+    const examBadgeContainer = document.getElementById('exam-badge-container');
+    const datePicker = document.getElementById('date-picker');
+    const selectedDateLabel = document.getElementById('selected-date-label');
+    const dailyProgressText = document.getElementById('daily-progress-text');
+    const dailyProgressBar = document.getElementById('daily-progress-bar');
+    const subjectsGrid = document.getElementById('subjects-grid');
+    const addSubjectForm = document.getElementById('add-subject-form');
+    const newSubjectName = document.getElementById('new-subject-name');
+    const routineGrid = document.getElementById('routine-grid');
+    const routineStats = document.getElementById('routine-stats');
+    const addRoutineForm = document.getElementById('add-routine-form');
+    const newRoutineLabel = document.getElementById('new-routine-label');
+    const newRoutineType = document.getElementById('new-routine-type');
+    const maxTestMarksInput = document.getElementById('max-test-marks-input');
+    const revTestGrid = document.getElementById('rev-test-grid');
+    const revTestStats = document.getElementById('rev-test-stats');
+    const addRevTestForm = document.getElementById('add-rev-test-form');
+    const newRevTestLabel = document.getElementById('new-rev-test-label');
+    const newRevTestType = document.getElementById('new-rev-test-type');
+    const calendarMonthLabel = document.getElementById('calendar-month-label');
+    const calendarGrid = document.getElementById('calendar-grid');
+    const monthSummaryBadge = document.getElementById('month-summary-badge');
+    const chartAvgBadge = document.getElementById('chart-avg-badge');
+    const hoursChartBox = document.getElementById('hours-chart-box');
+    const testGraphSubtitle = document.getElementById('test-graph-subtitle');
+    const testChartAvgBadge = document.getElementById('test-chart-avg-badge');
+    const testChartBox = document.getElementById('test-chart-box');
+    const streakBadge = document.getElementById('streak-badge');
+    const exportBtn = document.getElementById('export-btn');
+    const quickBackupBtn = document.getElementById('quick-backup-btn');
+    const lastBackupLabel = document.getElementById('last-backup-label');
+    const pdfBtn = document.getElementById('pdf-btn');
+    const quickPdfBtn = document.getElementById('quick-pdf-btn');
+    const importInput = document.getElementById('import-input');
+    const backupStatus = document.getElementById('backup-status');
+    const backlogForm = document.getElementById('backlog-form');
+    const backlogSubject = document.getElementById('backlog-subject');
+    const backlogInput = document.getElementById('backlog-input');
+    const backlogList = document.getElementById('backlog-list');
+    const backlogEmpty = document.getElementById('backlog-empty');
+    const backlogStats = document.getElementById('backlog-stats');
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function renderExamBadge() {
+      const tag = state.examTag || 'NEET';
+      document.title = `NURA — ${tag} Daily & Backlog Tracker`;
+      if (editingExamTag) {
+        examBadgeContainer.innerHTML = `
+          <span class="flex-center">
+            <input id="exam-tag-input" type="text" maxlength="20" value="${escapeHtml(tag)}" class="exam-edit-input" />
+            <button id="save-exam-tag-btn" type="button" class="exam-save-btn">Save</button>
+          </span>
+        `;
+        const inp = document.getElementById('exam-tag-input');
+        if (inp) {
+          inp.focus();
+          inp.select();
+        }
+      } else {
+        examBadgeContainer.innerHTML = `
+          <button id="edit-exam-tag-btn" type="button" title="Click to change exam/course name (e.g., NEET, B.Sc., JEE)" class="exam-badge-btn">
+            <span>${escapeHtml(tag)}</span>
+            <span style="opacity:0.75;">&#9998;</span>
+          </button>
+        `;
+      }
+    }
+
+    function commitExamTag(newVal) {
+      const trimmed = (newVal || '').trim();
+      if (trimmed) {
+        state.examTag = trimmed;
+        saveState();
+      }
+      editingExamTag = false;
+      renderExamBadge();
+    }
+
+    examBadgeContainer.addEventListener('click', e => {
+      if (e.target.closest('#edit-exam-tag-btn')) {
+        editingExamTag = true;
+        renderExamBadge();
+      } else if (e.target.closest('#save-exam-tag-btn')) {
+        const inp = document.getElementById('exam-tag-input');
+        commitExamTag(inp ? inp.value : '');
+      }
+    });
+
+    examBadgeContainer.addEventListener('keydown', e => {
+      if (e.target.id === 'exam-tag-input') {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          commitExamTag(e.target.value);
+        } else if (e.key === 'Escape') {
+          editingExamTag = false;
+          renderExamBadge();
+        }
+      }
+    });
+
+    function switchTab(tabId) {
+      activeTab = tabId;
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('hidden', panel.id !== `tab-${tabId}`);
+      });
+
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+      });
+
+      document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+      });
+
+      if (tabId === 'analytics' || tabId === 'calendar') {
+        renderCalendarAndChart();
+      }
+    }
+
+    function formatDisplayDate(iso) {
+      if (iso === getLocalTodayISO()) return `Today (${iso})`;
+      const [y, m, d] = iso.split('-').map(Number);
+      const dt = new Date(y, m - 1, d);
+      return dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function shiftDate(iso, deltaDays) {
+      const [y, m, d] = iso.split('-').map(Number);
+      const dt = new Date(y, m - 1, d + deltaDays);
+      const ny = dt.getFullYear();
+      const nm = String(dt.getMonth() + 1).padStart(2, '0');
+      const nd = String(dt.getDate()).padStart(2, '0');
+      return `${ny}-${nm}-${nd}`;
+    }
+
+    function syncCalendarMonthToSelected() {
+      viewYear = Number(selectedDate.slice(0, 4));
+      viewMonth = Number(selectedDate.slice(5, 7)) - 1;
+    }
+
+    function isTaskChecked(date, subjectId, taskId) {
+      return Boolean(state.dailyTasks[date]?.[subjectId]?.[taskId]);
+    }
+
+    function getTaskTime(date, subjectId, taskId) {
+      const entry = state.taskTimes?.[date]?.[subjectId]?.[taskId];
+      return {
+        plan: entry?.plan || '',
+        spent: entry?.spent || '',
+        planUnit: entry?.planUnit === 'h' ? 'h' : 'm',
+        spentUnit: entry?.spentUnit === 'h' ? 'h' : 'm'
+      };
+    }
+
+    function setTaskTime(date, subjectId, taskId, field, value) {
+      if (!state.taskTimes) state.taskTimes = {};
+      if (!state.taskTimes[date]) state.taskTimes[date] = {};
+      if (!state.taskTimes[date][subjectId]) state.taskTimes[date][subjectId] = {};
+      const prev = getTaskTime(date, subjectId, taskId);
+      state.taskTimes[date][subjectId][taskId] = { ...prev, [field]: value };
+      saveState();
+      renderDailyTimeSummaries();
+    }
+
+    function getSubjectTime(date, subjectId) {
+      const entry = state.subjectTimes?.[date]?.[subjectId];
+      return {
+        plan: entry?.plan || '',
+        spent: entry?.spent || '',
+        planUnit: entry?.planUnit === 'm' ? 'm' : 'h',
+        spentUnit: entry?.spentUnit === 'm' ? 'm' : 'h'
+      };
+    }
+
+    function setSubjectTime(date, subjectId, field, value) {
+      if (!state.subjectTimes) state.subjectTimes = {};
+      if (!state.subjectTimes[date]) state.subjectTimes[date] = {};
+      const prev = getSubjectTime(date, subjectId);
+      state.subjectTimes[date][subjectId] = { ...prev, [field]: value };
+      saveState();
+    }
+
+    function toggleSubjectTimeUnit(date, subjectId, unitField) {
+      const prev = getSubjectTime(date, subjectId);
+      const nextUnit = prev[unitField] === 'h' ? 'm' : 'h';
+      setSubjectTime(date, subjectId, unitField, nextUnit);
+      renderDaily();
+    }
+
+    function toggleTaskTimeUnit(date, subjectId, taskId, unitField) {
+      const prev = getTaskTime(date, subjectId, taskId);
+      const nextUnit = prev[unitField] === 'h' ? 'm' : 'h';
+      setTaskTime(date, subjectId, taskId, unitField, nextUnit);
+      renderDaily();
+    }
+
+    function toMinutes(val, unit) {
+      const n = parseFloat(val) || 0;
+      if (n <= 0) return 0;
+      return unit === 'h' ? n * 60 : n;
+    }
+
+    function formatMins(mins) {
+      const m = Math.round(Number(mins) || 0);
+      if (m <= 0) return '0m';
+      const h = Math.floor(m / 60);
+      const rem = m % 60;
+      if (h === 0) return `${rem}m`;
+      if (rem === 0) return `${h}h`;
+      return `${h}h ${rem}m`;
+    }
+
+    function renderDailyTimeSummaries() {
+      getSubjects().forEach(sub => {
+        let subPlan = 0;
+        let subSpent = 0;
+        getSubjectTasks(sub.id).forEach(task => {
+          const t = getTaskTime(selectedDate, sub.id, task.id);
+          subPlan += toMinutes(t.plan, t.planUnit);
+          subSpent += toMinutes(t.spent, t.spentUnit);
+        });
+        const planEl = document.querySelector(`[data-subject-plan="${sub.id}"]`);
+        const spentEl = document.querySelector(`[data-subject-spent="${sub.id}"]`);
+        if (planEl) planEl.textContent = formatMins(subPlan);
+        if (spentEl) spentEl.textContent = formatMins(subSpent);
+      });
+    }
+
+    function toggleTask(date, subjectId, taskId) {
+      if (!state.dailyTasks[date]) state.dailyTasks[date] = {};
+      if (!state.dailyTasks[date][subjectId]) state.dailyTasks[date][subjectId] = {};
+      state.dailyTasks[date][subjectId][taskId] = !state.dailyTasks[date][subjectId][taskId];
+      saveState();
+      renderDaily();
+    }
+
+    function getRoutineEntry(date, id) {
+      return state.dailyRoutine[date]?.[id] || { done: false, value: '' };
+    }
+
+    function updateRoutineEntry(date, id, patch) {
+      if (!state.dailyRoutine[date]) state.dailyRoutine[date] = {};
+      const prev = state.dailyRoutine[date][id] || { done: false, value: '' };
+      state.dailyRoutine[date][id] = { ...prev, ...patch };
+      saveState();
+      renderRoutine();
+      renderCalendarAndChart();
+    }
+
+    function getRevTestEntry(date, id) {
+      if (!state.dailyRevTest) state.dailyRevTest = {};
+      return state.dailyRevTest[date]?.[id] || { done: false, value: '' };
+    }
+
+    function updateRevTestEntry(date, id, patch) {
+      if (!state.dailyRevTest) state.dailyRevTest = {};
+      if (!state.dailyRevTest[date]) state.dailyRevTest[date] = {};
+      const prev = state.dailyRevTest[date][id] || { done: false, value: '' };
+      state.dailyRevTest[date][id] = { ...prev, ...patch };
+      saveState();
+      renderRevTest();
+      renderCalendarAndChart();
+    }
+
+    function renderDaily() {
+      renderExamBadge();
+      datePicker.value = selectedDate;
+      selectedDateLabel.textContent = formatDisplayDate(selectedDate);
+
+      const subjects = getSubjects();
+      syncBacklogSubjectOptions(subjects);
+
+      let totalTasks = 0;
+      let completedTasks = 0;
+
+      subjectsGrid.innerHTML = subjects.map(sub => {
+        const subTasks = getSubjectTasks(sub.id);
+        const activeToday = isSubjectActive(selectedDate, sub.id);
+        if (activeToday) totalTasks += subTasks.length;
+        const subTime = getSubjectTime(selectedDate, sub.id);
+        let subDone = 0;
+
+        const tasksHtml = subTasks.map(task => {
+          const checked = isTaskChecked(selectedDate, sub.id, task.id);
+          if (checked) {
+            subDone++;
+            if (activeToday) completedTasks++;
+          }
+
+          const isEditing = editingTask && editingTask.subjectId === sub.id && editingTask.taskId === task.id;
+          if (isEditing) {
+            return `
+              <div class="flex-center" style="padding:0.45rem; border-radius:0.75rem; border:1px solid var(--indigo-300); background:rgba(238,242,255,0.6);">
+                <input
+                  type="text"
+                  class="edit-task-input"
+                  style="flex:1; min-width:0; background:#fff; border:1px solid var(--indigo-300); border-radius:0.5rem; padding:0.25rem 0.5rem; font-size:0.75rem; font-weight:500;"
+                  data-subject="${sub.id}"
+                  data-task="${task.id}"
+                  value="${escapeHtml(task.label)}"
+                />
+                <button type="button" data-save-task="${task.id}" data-subject="${sub.id}" class="btn-primary" style="padding:0.25rem 0.5rem; font-size:0.7rem;">Save</button>
+              </div>
+            `;
+          }
+
+          const tTime = getTaskTime(selectedDate, sub.id, task.id);
+
+          return `
+            <div class="task-box">
+              <div class="task-row-top">
+                <label class="task-label-wrap">
+                  <input
+                    type="checkbox"
+                    class="task-checkbox"
+                    style="width:1rem; height:1rem; flex-shrink:0;"
+                    data-subject="${sub.id}"
+                    data-task="${task.id}"
+                    ${checked ? 'checked' : ''}
+                  />
+                  <span class="task-text">${escapeHtml(task.label)}</span>
+                </label>
+                <div class="flex-center" style="gap:0.15rem; flex-shrink:0;">
+                  <button type="button" data-edit-task="${task.id}" data-subject="${sub.id}" title="Rename task" class="mini-icon-btn edit">&#9998;</button>
+                  <button type="button" data-remove-task="${task.id}" data-subject="${sub.id}" title="Remove task" class="mini-icon-btn del">&times;</button>
+                </div>
+              </div>
+              <div class="time-subrow">
+                <div class="flex-center" style="gap:0.25rem;">
+                  <span>Plan</span>
+                  <input type="number" min="0" step="any" placeholder="0" data-time-field="plan" data-subject="${sub.id}" data-task="${task.id}" value="${escapeHtml(tTime.plan || '')}" class="time-input-mini" />
+                  <button type="button" data-toggle-unit="planUnit" data-subject="${sub.id}" data-task="${task.id}" title="Switch m/h" class="unit-btn">${tTime.planUnit}</button>
+                </div>
+                <div class="flex-center" style="gap:0.25rem;">
+                  <span>Spent</span>
+                  <input type="number" min="0" step="any" placeholder="0" data-time-field="spent" data-subject="${sub.id}" data-task="${task.id}" value="${escapeHtml(tTime.spent || '')}" class="time-input-mini" style="color:var(--emerald-700);" />
+                  <button type="button" data-toggle-unit="spentUnit" data-subject="${sub.id}" data-task="${task.id}" title="Switch m/h" class="unit-btn">${tTime.spentUnit}</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const isEditingSub = editingSubjectId === sub.id;
+        const titleBlockHtml = isEditingSub
+          ? `<div class="flex-center" style="flex:1; min-width:0;">
+              <input type="text" class="edit-subject-input" style="flex:1; min-width:0; background:#fff; border:1px solid var(--indigo-300); border-radius:0.5rem; padding:0.25rem 0.5rem; font-size:0.75rem; font-weight:700;" data-subject-id="${sub.id}" value="${escapeHtml(sub.name)}" />
+              <button type="button" data-save-subject="${sub.id}" class="btn-primary" style="padding:0.25rem 0.5rem; font-size:0.7rem;">Save</button>
+            </div>`
+          : `<div class="flex-center" style="min-width:0; flex:1;">
+              <h3 class="truncate" style="font-size:1rem; font-weight:700; color:var(--slate-900);">${escapeHtml(sub.name)}</h3>
+              <button type="button" data-edit-subject="${sub.id}" title="Rename subject" class="mini-icon-btn edit">&#9998;</button>
+              <button type="button" data-remove-subject="${sub.id}" title="Remove subject" class="mini-icon-btn del">&times;</button>
+            </div>`;
+
+        return `
+          <div class="subject-card ${sub.border} ${activeToday ? '' : 'off-today'}">
+            <div>
+              <div class="flex-between" style="margin-bottom:0.5rem;">
+                ${titleBlockHtml}
+                <span class="pill-badge ${sub.badge}">${activeToday ? `${subDone} / ${subTasks.length}` : 'Off'}</span>
+              </div>
+              <div style="margin-bottom:0.75rem;">
+                <label class="flex-center" style="font-size:0.7rem; font-weight:600; cursor:pointer; color:${activeToday ? 'var(--emerald-700)' : 'var(--slate-400)'};">
+                  <input type="checkbox" class="subject-turn-checkbox" style="width:0.85rem; height:0.85rem;" data-subject-turn="${sub.id}" ${activeToday ? 'checked' : ''} />
+                  <span>${activeToday ? "Today's Turn" : 'Off Today'}</span>
+                </label>
+              </div>
+              <div class="space-y-2">
+                ${tasksHtml || '<p style="font-size:0.75rem; color:var(--slate-400); padding:0.5rem 0; text-align:center;">Koi task nahi hai. Neeche se add karein.</p>'}
+              </div>
+            </div>
+
+            <div class="sub-footer space-y-2">
+              <div class="sub-time-box">
+                <div class="flex-center" style="gap:0.25rem;">
+                  <span style="font-weight:700;">Plan</span>
+                  <input type="number" min="0" step="any" placeholder="0" data-sub-time-field="plan" data-subject="${sub.id}" value="${escapeHtml(subTime.plan || '')}" class="sub-time-input" />
+                  <button type="button" data-toggle-sub-unit="planUnit" data-subject="${sub.id}" class="unit-btn">${subTime.planUnit}</button>
+                </div>
+                <div class="flex-center" style="gap:0.25rem;">
+                  <span style="font-weight:700; color:var(--emerald-700);">Spent</span>
+                  <input type="number" min="0" step="any" placeholder="0" data-sub-time-field="spent" data-subject="${sub.id}" value="${escapeHtml(subTime.spent || '')}" class="sub-time-input" style="color:var(--emerald-700);" />
+                  <button type="button" data-toggle-sub-unit="spentUnit" data-subject="${sub.id}" class="unit-btn">${subTime.spentUnit}</button>
+                </div>
+              </div>
+              <form class="add-subject-task-form flex-center" data-subject="${sub.id}">
+                <input type="text" placeholder="+ Naya task likhein..." class="text-input" style="padding:0.38rem 0.6rem; font-size:0.75rem; border-radius:0.5rem;" />
+                <button type="submit" class="btn-dark" style="padding:0.38rem 0.65rem; font-size:0.75rem; border-radius:0.5rem;">Add</button>
+              </form>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const pct = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+      dailyProgressText.textContent = `${completedTasks} / ${totalTasks} Completed (${pct}%)`;
+      dailyProgressBar.style.width = `${pct}%`;
+
+      renderDailyTimeSummaries();
+      renderRoutine();
+      renderRevTest();
+      renderCalendarAndChart();
+    }
+
+    function renderRoutine() {
+      const items = getRoutineItems();
+      let ticked = 0;
+
+      routineGrid.innerHTML = items.map(item => {
+        const entry = getRoutineEntry(selectedDate, item.id);
+        if (entry.done) ticked++;
+
+        let inputHtml = '';
+        if (item.type === 'time') {
+          inputHtml = `<input type="time" data-routine-input="${item.id}" value="${escapeHtml(entry.value || '')}" class="card-input" />`;
+        } else if (item.type === 'number') {
+          inputHtml = `<input type="number" step="0.5" min="0" max="24" placeholder="e.g. 8.5" data-routine-input="${item.id}" value="${escapeHtml(entry.value || '')}" class="card-input" />`;
+        }
+
+        const isEditing = editingRoutineId === item.id;
+        const headerHtml = isEditing
+          ? `<div class="flex-center">
+              <input type="text" class="edit-routine-input" style="flex:1; min-width:0; background:#fff; border:1px solid var(--indigo-300); border-radius:0.5rem; padding:0.25rem 0.5rem; font-size:0.75rem; font-weight:600;" data-routine-id="${item.id}" value="${escapeHtml(item.label)}" />
+              <button type="button" data-save-routine="${item.id}" class="btn-primary" style="padding:0.25rem 0.5rem; font-size:0.7rem;">Save</button>
+            </div>`
+          : `<div class="flex-between">
+              <label class="flex-center" style="cursor:pointer; flex:1; min-width:0;">
+                <input type="checkbox" class="routine-checkbox" style="width:1rem; height:1rem; flex-shrink:0;" data-routine-id="${item.id}" ${entry.done ? 'checked' : ''} />
+                <span class="truncate" style="font-size:0.78rem; font-weight:700; color:${entry.done ? 'var(--indigo-900)' : 'var(--slate-700)'};">${escapeHtml(item.label)}</span>
+              </label>
+              <div class="flex-center" style="gap:0.1rem; flex-shrink:0;">
+                <button type="button" data-edit-routine="${item.id}" title="Rename" class="mini-icon-btn edit">&#9998;</button>
+                <button type="button" data-remove-routine="${item.id}" title="Remove" class="mini-icon-btn del">&times;</button>
+              </div>
+            </div>`;
+
+        return `
+          <div class="item-tile ${entry.done ? 'checked-indigo' : ''}">
+            ${headerHtml}
+            ${inputHtml}
+          </div>
+        `;
+      }).join('');
+
+      const hrsVal = getRoutineEntry(selectedDate, 'effective_hrs').value;
+      const hrsText = hrsVal ? `${hrsVal} hrs` : '0 hrs';
+      routineStats.textContent = `${ticked}/${items.length} Ticked \u2022 ${hrsText}`;
+    }
+
+    function renderRevTest() {
+      const items = getRevTestItems();
+      const maxMarks = Number(state.maxTestMarks) > 0 ? Number(state.maxTestMarks) : 720;
+      maxTestMarksInput.value = maxMarks;
+
+      let ticked = 0;
+
+      revTestGrid.innerHTML = items.map(item => {
+        const entry = getRevTestEntry(selectedDate, item.id);
+        if (entry.done) ticked++;
+
+        const displayLabel = item.id === 'test_marks' && item.label === 'Test Marks'
+          ? `Test Marks (Out of ${maxMarks})`
+          : item.label;
+
+        let inputHtml = '';
+        if (item.type === 'number') {
+          inputHtml = `<input type="number" step="any" min="0" max="${item.id === 'test_marks' ? maxMarks : 9999}" placeholder="${item.id === 'test_marks' ? 'e.g. ' + Math.round(maxMarks * 0.85) : 'e.g. 50'}" data-revtest-input="${item.id}" value="${escapeHtml(entry.value || '')}" class="card-input" />`;
+        } else if (item.type === 'text') {
+          inputHtml = `<input type="text" placeholder="e.g. Part Test 4 / Unit Test" data-revtest-input="${item.id}" value="${escapeHtml(entry.value || '')}" class="card-input" />`;
+        }
+
+        const isEditing = editingRevTestId === item.id;
+        const headerHtml = isEditing
+          ? `<div class="flex-center">
+              <input type="text" class="edit-revtest-input" style="flex:1; min-width:0; background:#fff; border:1px solid var(--rose-300); border-radius:0.5rem; padding:0.25rem 0.5rem; font-size:0.75rem; font-weight:600;" data-revtest-id="${item.id}" value="${escapeHtml(item.label)}" />
+              <button type="button" data-save-revtest="${item.id}" class="btn-rose" style="padding:0.25rem 0.5rem; font-size:0.7rem;">Save</button>
+            </div>`
+          : `<div class="flex-between">
+              <label class="flex-center" style="cursor:pointer; flex:1; min-width:0;">
+                <input type="checkbox" class="revtest-checkbox" style="width:1rem; height:1rem; flex-shrink:0;" data-revtest-id="${item.id}" ${entry.done ? 'checked' : ''} />
+                <span class="truncate" style="font-size:0.78rem; font-weight:700; color:${entry.done ? 'var(--rose-900)' : 'var(--slate-700)'};">${escapeHtml(displayLabel)}</span>
+              </label>
+              <div class="flex-center" style="gap:0.1rem; flex-shrink:0;">
+                <button type="button" data-edit-revtest="${item.id}" title="Rename" class="mini-icon-btn edit">&#9998;</button>
+                <button type="button" data-remove-revtest="${item.id}" title="Remove" class="mini-icon-btn del">&times;</button>
+              </div>
+            </div>`;
+
+        return `
+          <div class="item-tile ${entry.done ? 'checked-rose' : ''}">
+            ${headerHtml}
+            ${inputHtml}
+          </div>
+        `;
+      }).join('');
+
+      const marksEntry = getRevTestEntry(selectedDate, 'test_marks');
+      const marksText = marksEntry.value !== '' ? `${marksEntry.value}/${maxMarks}` : '-';
+      revTestStats.textContent = `${ticked}/${items.length} Ticked \u2022 Test: ${marksText}`;
+    }
+
+    function syncBacklogSubjectOptions(subjects) {
+      const current = backlogSubject.value;
+      backlogSubject.innerHTML = subjects.map(s => `<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`).join('');
+      if (subjects.some(s => s.name === current)) {
+        backlogSubject.value = current;
+      }
+    }
+
+    function getDateCompletionCount(dateIso) {
+      let count = 0;
+      getSubjects().forEach(sub => {
+        if (!isSubjectActive(dateIso, sub.id)) return;
+        getSubjectTasks(sub.id).forEach(task => {
+          if (isTaskChecked(dateIso, sub.id, task.id)) count++;
+        });
+      });
+      return count;
+    }
+
+    function getDateTotalTasks(dateIso) {
+      return getSubjects().reduce((sum, sub) => {
+        if (!isSubjectActive(dateIso, sub.id)) return sum;
+        return sum + getSubjectTasks(sub.id).length;
+      }, 0);
+    }
+
+    function isDateActive(dateIso) {
+      if (getDateCompletionCount(dateIso) > 0) return true;
+      const eff = getRoutineEntry(dateIso, 'effective_hrs');
+      return Boolean(eff.done && eff.value && parseFloat(eff.value) > 0);
+    }
+
+    function updateStreak() {
+      let streak = 0;
+      let cursor = getLocalTodayISO();
+      if (!isDateActive(cursor)) {
+        cursor = shiftDate(cursor, -1);
+      }
+      while (isDateActive(cursor) && streak < 3650) {
+        streak++;
+        cursor = shiftDate(cursor, -1);
+      }
+      streakBadge.textContent = `${streak} Day Streak`;
+    }
+
+    function getDateTestMarks(dateIso) {
+      const entry = getRevTestEntry(dateIso, 'test_marks');
+      if (!entry.done || entry.value === '' || entry.value === null || entry.value === undefined) {
+        return null;
+      }
+      const num = parseFloat(entry.value);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    function renderBarSvg(container, labels, values, maxVal, barColor, unitLabel, tooltips) {
+      const w = 680;
+      const h = 240;
+      const padL = 42;
+      const padR = 14;
+      const padT = 18;
+      const padB = 30;
+      const plotW = w - padL - padR;
+      const plotH = h - padT - padB;
+      const n = labels.length;
+      const slotW = plotW / Math.max(n, 1);
+      const barW = Math.max(8, Math.min(18, slotW * 0.68));
+
+      let gridSvg = '';
+      const steps = 4;
+      for (let i = 0; i <= steps; i++) {
+        const val = Math.round((maxVal / steps) * i);
+        const y = padT + plotH - (plotH * (i / steps));
+        gridSvg += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${w - padR}" y2="${y.toFixed(1)}" stroke="#e2e8f0" stroke-width="1" />`;
+        gridSvg += `<text x="${padL - 6}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="#64748b">${val}</text>`;
+      }
+
+      let barsSvg = '';
+      for (let i = 0; i < n; i++) {
+        const xCenter = padL + i * slotW + slotW / 2;
+        const val = values[i];
+        if (val !== null && val > 0) {
+          const clamped = Math.min(val, maxVal);
+          const barH = Math.max(3, (clamped / maxVal) * plotH);
+          const y = padT + plotH - barH;
+          const tip = escapeHtml(tooltips[i] || `${labels[i]}: ${val} ${unitLabel}`);
+          barsSvg += `
+            <g>
+              <title>${tip}</title>
+              <rect x="${(xCenter - barW / 2).toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" rx="4" fill="${barColor}" />
+              <text x="${xCenter.toFixed(1)}" y="${Math.max(11, y - 4).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="700" fill="#334155">${val}</text>
+            </g>
+          `;
+        } else if (val === 0) {
+          const tip = escapeHtml(tooltips[i] || `${labels[i]}: 0 ${unitLabel}`);
+          barsSvg += `<g><title>${tip}</title><rect x="${(xCenter - barW / 2).toFixed(1)}" y="${(padT + plotH - 3).toFixed(1)}" width="${barW.toFixed(1)}" height="3" rx="1.5" fill="${barColor}" /></g>`;
+        }
+        barsSvg += `<text x="${xCenter.toFixed(1)}" y="${h - 10}" text-anchor="middle" font-size="9.5" fill="#64748b">${labels[i]}</text>`;
+      }
+
+      container.innerHTML = `
+        <svg viewBox="0 0 ${w} ${h}" class="chart-svg" role="img" aria-label="${escapeHtml(unitLabel)} chart">
+          ${gridSvg}
+          ${barsSvg}
+        </svg>
+      `;
+    }
+
+    function renderCalendarAndChart() {
+      updateStreak();
+      const maxMarks = Number(state.maxTestMarks) > 0 ? Number(state.maxTestMarks) : 720;
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      calendarMonthLabel.textContent = `${monthNames[viewMonth]} ${viewYear}`;
+
+      const firstDayOfWeek = new Date(viewYear, viewMonth, 1).getDay();
+      const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+      let cellsHtml = '';
+      for (let i = 0; i < firstDayOfWeek; i++) {
+        cellsHtml += '<div class="cal-cell cal-empty"></div>';
+      }
+
+      const labels = [];
+      const tickedHoursData = [];
+      const hoursTooltips = [];
+      const testMarksData = [];
+      const testTooltips = [];
+      let totalMonthHours = 0;
+      let activeDays = 0;
+      let totalTestMarks = 0;
+      let testCount = 0;
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const mm = String(viewMonth + 1).padStart(2, '0');
+        const dd = String(day).padStart(2, '0');
+        const dateIso = `${viewYear}-${mm}-${dd}`;
+
+        const doneCount = getDateCompletionCount(dateIso);
+        const totalTasksPerDay = getDateTotalTasks(dateIso);
+        const effEntry = getRoutineEntry(dateIso, 'effective_hrs');
+        const hrsNum = effEntry.done && effEntry.value ? parseFloat(effEntry.value) : 0;
+        const validHrs = Number.isFinite(hrsNum) && hrsNum > 0 ? hrsNum : 0;
+
+        labels.push(String(day));
+        tickedHoursData.push(validHrs > 0 ? validHrs : null);
+        hoursTooltips.push(`${day} ${monthNames[viewMonth]}: ${validHrs} hrs`);
+
+        if (validHrs > 0) {
+          totalMonthHours += validHrs;
+          activeDays++;
+        }
+
+        const tMarks = getDateTestMarks(dateIso);
+        testMarksData.push(tMarks);
+        if (tMarks !== null) {
+          totalTestMarks += tMarks;
+          testCount++;
+          const topic = getRevTestEntry(dateIso, 'test_topic').value;
+          testTooltips.push(`${day} ${monthNames[viewMonth]}: ${tMarks}/${maxMarks}${topic ? ' (' + topic + ')' : ''}`);
+        } else {
+          testTooltips.push('');
+        }
+
+        let bgClass = 'cal-zero';
+        if (totalTasksPerDay > 0 && doneCount === totalTasksPerDay) {
+          bgClass = 'cal-done';
+        } else if (doneCount > 0) {
+          bgClass = 'cal-partial';
+        }
+
+        const isSelected = dateIso === selectedDate ? 'cal-selected' : '';
+        const hrsBadge = validHrs > 0
+          ? `<span style="font-size:0.65rem; font-weight:700; color:var(--indigo-700); line-height:1;">${validHrs}h</span>`
+          : `<span style="font-size:0.65rem; color:var(--slate-400); line-height:1;">${doneCount}/${totalTasksPerDay}</span>`;
+
+        cellsHtml += `
+          <button type="button" data-cal-date="${dateIso}" class="cal-cell ${bgClass} ${isSelected}">
+            <span style="font-size:0.75rem; font-weight:700; line-height:1;">${day}</span>
+            ${hrsBadge}
+          </button>
+        `;
+      }
+
+      calendarGrid.innerHTML = cellsHtml;
+      monthSummaryBadge.textContent = `${totalMonthHours.toFixed(1).replace(/\.0$/, '')} hrs this month`;
+
+      const avgHrs = activeDays > 0 ? (totalMonthHours / activeDays).toFixed(1) : '0';
+      chartAvgBadge.textContent = `Avg: ${avgHrs} hrs/day`;
+
+      const avgMarks = testCount > 0 ? (totalTestMarks / testCount).toFixed(1).replace(/\.0$/, '') : '0';
+      testGraphSubtitle.textContent = `Daily Revision / Test mein Test Marks (Out of ${maxMarks}) add karne par sirf test marks ka separate graph update hota hai.`;
+      testChartAvgBadge.textContent = `Avg: ${avgMarks} / ${maxMarks} (${testCount} tests)`;
+
+      const maxRecordedHrs = tickedHoursData.reduce((m, v) => (v !== null && v > m ? v : m), 12);
+      const maxRecordedMarks = testMarksData.reduce((m, v) => (v !== null && v > m ? v : m), maxMarks);
+
+      renderBarSvg(hoursChartBox, labels, tickedHoursData, Math.ceil(maxRecordedHrs), '#4f46e5', 'hrs', hoursTooltips);
+      renderBarSvg(testChartBox, labels, testMarksData, maxRecordedMarks, '#e11d48', 'marks', testTooltips);
+    }
+
+    function renderBacklogs() {
+      const pendingCount = state.backlogs.filter(b => !b.done).length;
+      const doneCount = state.backlogs.filter(b => b.done).length;
+      backlogStats.textContent = `${pendingCount} Pending \u2022 ${doneCount} Done`;
+
+      const filtered = state.backlogs.filter(item => {
+        if (backlogFilter === 'pending') return !item.done;
+        if (backlogFilter === 'done') return item.done;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        backlogList.innerHTML = '';
+        backlogEmpty.classList.remove('hidden');
+      } else {
+        backlogEmpty.classList.add('hidden');
+        const badgeMap = {
+          Physics: 'badge-blue',
+          Chemistry: 'badge-violet',
+          Zoology: 'badge-emerald',
+          Botany: 'badge-teal'
+        };
+
+        backlogList.innerHTML = filtered.map(item => `
+          <li class="backlog-item">
+            <label class="flex-center" style="flex:1; cursor:pointer; min-width:0; gap:0.65rem;">
+              <input
+                type="checkbox"
+                class="backlog-toggle"
+                style="width:1rem; height:1rem; flex-shrink:0;"
+                data-id="${item.id}"
+                ${item.done ? 'checked' : ''}
+              />
+              <span class="pill-badge ${badgeMap[item.subject] || 'badge-amber'}">
+                ${escapeHtml(item.subject)}
+              </span>
+              <span class="truncate" style="font-size:0.875rem; font-weight:500; ${item.done ? 'text-decoration:line-through; color:var(--slate-400);' : 'color:var(--slate-800);'}">
+                ${escapeHtml(item.text)}
+              </span>
+            </label>
+            <button type="button" data-delete-id="${item.id}" class="mini-icon-btn del" style="font-weight:700; padding:0.25rem 0.5rem;">
+              Delete
+            </button>
+          </li>
+        `).join('');
+      }
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === backlogFilter);
+      });
+    }
+
+    // Tab Navigation Listeners
+    document.querySelectorAll('[data-tab]').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    // Subjects Listeners
+    subjectsGrid.addEventListener('change', e => {
+      if (e.target.classList.contains('task-checkbox')) {
+        toggleTask(selectedDate, e.target.dataset.subject, e.target.dataset.task);
+      } else if (e.target.classList.contains('subject-turn-checkbox')) {
+        setSubjectActive(selectedDate, e.target.dataset.subjectTurn, e.target.checked);
+      }
+    });
+
+    subjectsGrid.addEventListener('input', e => {
+      if (e.target.classList.contains('task-time-input')) {
+        setTaskTime(selectedDate, e.target.dataset.subject, e.target.dataset.task, e.target.dataset.timeField, e.target.value);
+      } else if (e.target.classList.contains('subject-time-input')) {
+        setSubjectTime(selectedDate, e.target.dataset.subject, e.target.dataset.subTimeField, e.target.value);
+      }
+    });
+
+    function commitSubjectEdit(subjectId, newName) {
+      const trimmed = newName.trim();
+      if (trimmed) {
+        const list = getSubjects();
+        const target = list.find(s => s.id === subjectId);
+        if (target) target.name = trimmed;
+        saveState();
+      }
+      editingSubjectId = null;
+      renderDaily();
+    }
+
+    addSubjectForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = newSubjectName.value.trim();
+      if (!name) return;
+      const list = getSubjects();
+      const preset = COLOR_PRESETS[list.length % COLOR_PRESETS.length];
+      const id = 'sub_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5);
+      list.push({ id, name, badge: preset.badge, border: preset.border });
+      if (!state.subjectTasks) state.subjectTasks = getDefaultSubjectTasks();
+      state.subjectTasks[id] = PHY_CHEM_TASKS.map(t => ({ ...t }));
+      newSubjectName.value = '';
+      saveState();
+      renderDaily();
+    });
+
+    function commitTaskEdit(subjectId, taskId, newLabel) {
+      const trimmed = newLabel.trim();
+      if (trimmed) {
+        const list = getSubjectTasks(subjectId);
+        const target = list.find(t => t.id === taskId);
+        if (target) target.label = trimmed;
+        saveState();
+      }
+      editingTask = null;
+      renderDaily();
+    }
+
+    subjectsGrid.addEventListener('click', e => {
+      const unitBtn = e.target.closest('[data-toggle-unit]');
+      if (unitBtn) {
+        toggleTaskTimeUnit(selectedDate, unitBtn.dataset.subject, unitBtn.dataset.task, unitBtn.dataset.toggleUnit);
+        return;
+      }
+
+      const subUnitBtn = e.target.closest('[data-toggle-sub-unit]');
+      if (subUnitBtn) {
+        toggleSubjectTimeUnit(selectedDate, subUnitBtn.dataset.subject, subUnitBtn.dataset.toggleSubUnit);
+        return;
+      }
+
+      const editSubBtn = e.target.closest('[data-edit-subject]');
+      if (editSubBtn) {
+        editingSubjectId = editSubBtn.dataset.editSubject;
+        renderDaily();
+        const input = subjectsGrid.querySelector('.edit-subject-input');
+        if (input) { input.focus(); input.select(); }
+        return;
+      }
+
+      const saveSubBtn = e.target.closest('[data-save-subject]');
+      if (saveSubBtn) {
+        const input = subjectsGrid.querySelector('.edit-subject-input');
+        commitSubjectEdit(saveSubBtn.dataset.saveSubject, input ? input.value : '');
+        return;
+      }
+
+      const removeSubBtn = e.target.closest('[data-remove-subject]');
+      if (removeSubBtn) {
+        const subId = removeSubBtn.dataset.removeSubject;
+        state.subjects = getSubjects().filter(s => s.id !== subId);
+        saveState();
+        renderDaily();
+        return;
+      }
+
+      const editBtn = e.target.closest('[data-edit-task]');
+      if (editBtn) {
+        editingTask = { subjectId: editBtn.dataset.subject, taskId: editBtn.dataset.editTask };
+        renderDaily();
+        const input = subjectsGrid.querySelector('.edit-task-input');
+        if (input) { input.focus(); input.select(); }
+        return;
+      }
+
+      const saveBtn = e.target.closest('[data-save-task]');
+      if (saveBtn) {
+        const input = subjectsGrid.querySelector('.edit-task-input');
+        commitTaskEdit(saveBtn.dataset.subject, saveBtn.dataset.saveTask, input ? input.value : '');
+        return;
+      }
+
+      const removeBtn = e.target.closest('[data-remove-task]');
+      if (removeBtn) {
+        const subId = removeBtn.dataset.subject;
+        const taskId = removeBtn.dataset.removeTask;
+        state.subjectTasks[subId] = getSubjectTasks(subId).filter(t => t.id !== taskId);
+        saveState();
+        renderDaily();
+      }
+    });
+
+    subjectsGrid.addEventListener('keydown', e => {
+      if (e.target.classList.contains('edit-subject-input')) {
+        if (e.key === 'Enter') { e.preventDefault(); commitSubjectEdit(e.target.dataset.subjectId, e.target.value); }
+        else if (e.key === 'Escape') { editingSubjectId = null; renderDaily(); }
+        return;
+      }
+      if (e.target.classList.contains('edit-task-input')) {
+        if (e.key === 'Enter') { e.preventDefault(); commitTaskEdit(e.target.dataset.subject, e.target.dataset.task, e.target.value); }
+        else if (e.key === 'Escape') { editingTask = null; renderDaily(); }
+      }
+    });
+
+    subjectsGrid.addEventListener('submit', e => {
+      const form = e.target.closest('.add-subject-task-form');
+      if (!form) return;
+      e.preventDefault();
+      const input = form.querySelector('input');
+      const label = input ? input.value.trim() : '';
+      if (!label) return;
+      const subId = form.dataset.subject;
+      const list = getSubjectTasks(subId);
+      list.push({
+        id: 'custom_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
+        label
+      });
+      saveState();
+      renderDaily();
+    });
+
+    // Routine Listeners
+    routineGrid.addEventListener('change', e => {
+      if (e.target.classList.contains('routine-checkbox')) {
+        updateRoutineEntry(selectedDate, e.target.dataset.routineId, { done: e.target.checked });
+      } else if (e.target.dataset.routineInput) {
+        updateRoutineEntry(selectedDate, e.target.dataset.routineInput, { value: e.target.value });
+      }
+    });
+
+    function commitRoutineEdit(id, newLabel) {
+      const trimmed = newLabel.trim();
+      if (trimmed) {
+        const items = getRoutineItems();
+        const target = items.find(i => i.id === id);
+        if (target) target.label = trimmed;
+        saveState();
+      }
+      editingRoutineId = null;
+      renderRoutine();
+    }
+
+    routineGrid.addEventListener('click', e => {
+      const editBtn = e.target.closest('[data-edit-routine]');
+      if (editBtn) {
+        editingRoutineId = editBtn.dataset.editRoutine;
+        renderRoutine();
+        const input = routineGrid.querySelector('.edit-routine-input');
+        if (input) { input.focus(); input.select(); }
+        return;
+      }
+      const saveBtn = e.target.closest('[data-save-routine]');
+      if (saveBtn) {
+        const input = routineGrid.querySelector('.edit-routine-input');
+        commitRoutineEdit(saveBtn.dataset.saveRoutine, input ? input.value : '');
+        return;
+      }
+      const removeBtn = e.target.closest('[data-remove-routine]');
+      if (removeBtn) {
+        const id = removeBtn.dataset.removeRoutine;
+        state.routineItems = getRoutineItems().filter(i => i.id !== id);
+        saveState();
+        renderRoutine();
+      }
+    });
+
+    routineGrid.addEventListener('keydown', e => {
+      if (e.target.classList.contains('edit-routine-input')) {
+        if (e.key === 'Enter') { e.preventDefault(); commitRoutineEdit(e.target.dataset.routineId, e.target.value); }
+        else if (e.key === 'Escape') { editingRoutineId = null; renderRoutine(); }
+      }
+    });
+
+    addRoutineForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const label = newRoutineLabel.value.trim();
+      if (!label) return;
+      const items = getRoutineItems();
+      items.push({
+        id: 'routine_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
+        label,
+        type: newRoutineType.value
+      });
+      newRoutineLabel.value = '';
+      saveState();
+      renderRoutine();
+    });
+
+    // Max Test Marks Changeable Listener
+    maxTestMarksInput.addEventListener('input', e => {
+      const val = parseFloat(e.target.value);
+      if (Number.isFinite(val) && val > 0) {
+        state.maxTestMarks = val;
+        saveState();
+        renderRevTest();
+        renderCalendarAndChart();
+      }
+    });
+
+    // Daily Revision / Test Listeners
+    revTestGrid.addEventListener('change', e => {
+      if (e.target.classList.contains('revtest-checkbox')) {
+        updateRevTestEntry(selectedDate, e.target.dataset.revtestId, { done: e.target.checked });
+      } else if (e.target.dataset.revtestInput) {
+        const id = e.target.dataset.revtestInput;
+        const val = e.target.value;
+        if (id === 'test_marks' && val !== '' && !getRevTestEntry(selectedDate, id).done) {
+          updateRevTestEntry(selectedDate, id, { value: val, done: true });
+        } else {
+          updateRevTestEntry(selectedDate, id, { value: val });
+        }
+      }
+    });
+
+    function commitRevTestEdit(id, newLabel) {
+      const trimmed = newLabel.trim();
+      if (trimmed) {
+        const items = getRevTestItems();
+        const target = items.find(i => i.id === id);
+        if (target) target.label = trimmed;
+        saveState();
+      }
+      editingRevTestId = null;
+      renderRevTest();
+    }
+
+    revTestGrid.addEventListener('click', e => {
+      const editBtn = e.target.closest('[data-edit-revtest]');
+      if (editBtn) {
+        editingRevTestId = editBtn.dataset.editRevtest;
+        renderRevTest();
+        const input = revTestGrid.querySelector('.edit-revtest-input');
+        if (input) { input.focus(); input.select(); }
+        return;
+      }
+      const saveBtn = e.target.closest('[data-save-revtest]');
+      if (saveBtn) {
+        const input = revTestGrid.querySelector('.edit-revtest-input');
+        commitRevTestEdit(saveBtn.dataset.saveRevtest, input ? input.value : '');
+        return;
+      }
+      const removeBtn = e.target.closest('[data-remove-revtest]');
+      if (removeBtn) {
+        const id = removeBtn.dataset.removeRevtest;
+        state.revTestItems = getRevTestItems().filter(i => i.id !== id);
+        saveState();
+        renderRevTest();
+      }
+    });
+
+    revTestGrid.addEventListener('keydown', e => {
+      if (e.target.classList.contains('edit-revtest-input')) {
+        if (e.key === 'Enter') { e.preventDefault(); commitRevTestEdit(e.target.dataset.revtestId, e.target.value); }
+        else if (e.key === 'Escape') { editingRevTestId = null; renderRevTest(); }
+      }
+    });
+
+    addRevTestForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const label = newRevTestLabel.value.trim();
+      if (!label) return;
+      const items = getRevTestItems();
+      items.push({
+        id: 'revtest_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
+        label,
+        type: newRevTestType.value
+      });
+      newRevTestLabel.value = '';
+      saveState();
+      renderRevTest();
+    });
+
+    // Date & Calendar Listeners
+    datePicker.addEventListener('change', e => {
+      if (e.target.value) {
+        selectedDate = e.target.value;
+        syncCalendarMonthToSelected();
+        renderDaily();
+      }
+    });
+
+    document.getElementById('prev-day-btn').addEventListener('click', () => {
+      selectedDate = shiftDate(selectedDate, -1);
+      syncCalendarMonthToSelected();
+      renderDaily();
+    });
+
+    document.getElementById('next-day-btn').addEventListener('click', () => {
+      selectedDate = shiftDate(selectedDate, 1);
+      syncCalendarMonthToSelected();
+      renderDaily();
+    });
+
+    document.getElementById('today-btn').addEventListener('click', () => {
+      selectedDate = getLocalTodayISO();
+      syncCalendarMonthToSelected();
+      renderDaily();
+    });
+
+    document.getElementById('prev-month-btn').addEventListener('click', () => {
+      viewMonth--;
+      if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+      renderCalendarAndChart();
+    });
+
+    document.getElementById('next-month-btn').addEventListener('click', () => {
+      viewMonth++;
+      if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+      renderCalendarAndChart();
+    });
+
+    calendarGrid.addEventListener('click', e => {
+      const btn = e.target.closest('[data-cal-date]');
+      if (btn) {
+        selectedDate = btn.dataset.calDate;
+        renderDaily();
+        switchTab('today');
+      }
+    });
+
+    // Backlog Listeners
+    backlogForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const text = backlogInput.value.trim();
+      if (!text) return;
+      state.backlogs.unshift({
+        id: String(Date.now()) + Math.random().toString(36).slice(2, 6),
+        subject: backlogSubject.value,
+        text,
+        done: false
+      });
+      backlogInput.value = '';
+      saveState();
+      renderBacklogs();
+    });
+
+    backlogList.addEventListener('change', e => {
+      if (e.target.classList.contains('backlog-toggle')) {
+        const id = e.target.dataset.id;
+        const item = state.backlogs.find(b => b.id === id);
+        if (item) {
+          item.done = e.target.checked;
+          saveState();
+          renderBacklogs();
+        }
+      }
+    });
+
+    backlogList.addEventListener('click', e => {
+      const delId = e.target.dataset.deleteId;
+      if (delId) {
+        state.backlogs = state.backlogs.filter(b => b.id !== delId);
+        saveState();
+        renderBacklogs();
+      }
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        backlogFilter = btn.dataset.filter;
+        renderBacklogs();
+      });
+    });
+
+    // Backup & Restore
+    function updateLastBackupLabel() {
+      lastBackupLabel.textContent = state.lastBackupAt ? `Last backup: ${state.lastBackupAt}` : 'Last backup: Never';
+    }
+
+    function downloadBackup() {
+      const nowLabel = new Date().toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      state.lastBackupAt = nowLabel;
+      saveState();
+      updateLastBackupLabel();
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `nura_tracker_backup_${getLocalTodayISO()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      const prevText = quickBackupBtn.innerHTML;
+      quickBackupBtn.innerHTML = '<span>&#10003; Saved</span>';
+      backupStatus.textContent = 'Saara data Downloads mein save ho gaya!';
+      setTimeout(() => {
+        quickBackupBtn.innerHTML = prevText;
+        backupStatus.textContent = '';
+      }, 2500);
+    }
+
+    exportBtn.addEventListener('click', downloadBackup);
+    quickBackupBtn.addEventListener('click', downloadBackup);
+
+    // Self-Contained Offline PDF Generator (Zero External CDN Required)
+    function pdfSafe(str) {
+      return String(str || '')
+        .replace(/[^\x20-\x7E]/g, '')
+        .replace(/\\/g, '\\\\')
+        .replace(/\(/g, '\\(')
+        .replace(/\)/g, '\\)');
+    }
+
+    function buildSimplePdf(pagesLines) {
+      const objects = [];
+      const addObj = (body) => {
+        objects.push(body);
+        return objects.length;
+      };
+      const fontRegId = addObj('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+      const fontBoldId = addObj('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>');
+      const pagesId = addObj('');
+      const pageIds = [];
+
+      pagesLines.forEach(ops => {
+        const stream = ops.join('\n');
+        const contentId = addObj(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
+        const pageId = addObj(
+          `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 595 842] ` +
+          `/Resources << /Font << /F1 ${fontRegId} 0 R /F2 ${fontBoldId} 0 R >> >> ` +
+          `/Contents ${contentId} 0 R >>`
+        );
+        pageIds.push(pageId);
+      });
+
+      objects[pagesId - 1] = `<< /Type /Pages /Kids [${pageIds.map(id => id + ' 0 R').join(' ')}] /Count ${pageIds.length} >>`;
+      const catalogId = addObj(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
+
+      let pdf = '%PDF-1.4\n';
+      const offsets = [0];
+      objects.forEach((body, idx) => {
+        offsets.push(pdf.length);
+        pdf += `${idx + 1} 0 obj\n${body}\nendobj\n`;
+      });
+      const xrefPos = pdf.length;
+      pdf += `xref\n0 ${objects.length + 1}\n`;
+      pdf += '0000000000 65535 f \n';
+      for (let i = 1; i < offsets.length; i++) {
+        pdf += String(offsets[i]).padStart(10, '0') + ' 00000 n \n';
+      }
+      pdf += `trailer\n<< /Size ${objects.length + 1} /Root ${catalogId} 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;
+      return new Blob([pdf], { type: 'application/pdf' });
+    }
+
+    function generatePdfReport() {
+      const tag = state.examTag || 'NEET';
+      const maxMarks = Number(state.maxTestMarks) > 0 ? Number(state.maxTestMarks) : 720;
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const monthTitle = `${monthNames[viewMonth]} ${viewYear}`;
+      const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+      const pages = [[]];
+      let cur = pages[0];
+      let y = 785;
+
+      const textOp = (font, size, x, yPos, txt, r = 0.06, g = 0.09, b = 0.16) => {
+        cur.push(`BT /${font} ${size} Tf ${r} ${g} ${b} rg ${x} ${yPos} Td (${pdfSafe(txt)}) Tj ET`);
+      };
+      const rectOp = (x, yPos, w, h, r, g, b) => {
+        cur.push(`${r} ${g} ${b} rg ${x} ${yPos} ${w} ${h} re f`);
+      };
+      const nextPageIfNeeded = (needed) => {
+        if (y - needed < 50) {
+          pages.push([]);
+          cur = pages[pages.length - 1];
+          y = 785;
+        }
+      };
+
+      rectOp(40, y - 34, 515, 52, 0.06, 0.09, 0.16);
+      textOp('F2', 15, 54, y - 4, `NURA ${tag} Report - ${monthTitle}`, 1, 1, 1);
+      textOp('F1', 9.5, 54, y - 22, `Generated: ${getLocalTodayISO()} | ${streakBadge.textContent}`, 0.8, 0.84, 0.9);
+      y -= 58;
+
+      let totalHours = 0;
+      let activeDays = 0;
+      const rows = [];
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const mm = String(viewMonth + 1).padStart(2, '0');
+        const dd = String(d).padStart(2, '0');
+        const dateIso = `${viewYear}-${mm}-${dd}`;
+        const done = getDateCompletionCount(dateIso);
+        const total = getDateTotalTasks(dateIso);
+        const eff = getRoutineEntry(dateIso, 'effective_hrs');
+        const hrs = eff.done && eff.value ? parseFloat(eff.value) : 0;
+        const validHrs = Number.isFinite(hrs) && hrs > 0 ? hrs : 0;
+        const tMarks = getDateTestMarks(dateIso);
+
+        if (validHrs > 0) {
+          totalHours += validHrs;
+          activeDays++;
+        }
+        if (done > 0 || validHrs > 0 || tMarks !== null) {
+          const wake = getRoutineEntry(dateIso, 'wake').value || '-';
+          const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+          rows.push({
+            dateIso,
+            tasks: `${done}/${total} (${pct}%)`,
+            hrs: validHrs > 0 ? `${validHrs} hrs` : '-',
+            wake,
+            test: tMarks !== null ? `${tMarks}/${maxMarks}` : '-'
+          });
+        }
+      }
+
+      const avg = activeDays > 0 ? (totalHours / activeDays).toFixed(1) : '0';
+      textOp('F2', 10.5, 40, y, `Total Study Hours: ${totalHours.toFixed(1).replace(/\.0$/, '')} hrs | Active Days: ${activeDays} | Avg: ${avg} hrs/day`);
+      y -= 24;
+
+      rectOp(40, y - 5, 515, 19, 0.94, 0.96, 0.98);
+      textOp('F2', 9.5, 48, y + 1, 'Date', 0.2, 0.25, 0.33);
+      textOp('F2', 9.5, 160, y + 1, 'Tasks Done', 0.2, 0.25, 0.33);
+      textOp('F2', 9.5, 280, y + 1, 'Effective Hrs', 0.2, 0.25, 0.33);
+      textOp('F2', 9.5, 390, y + 1, 'Wake Up', 0.2, 0.25, 0.33);
+      textOp('F2', 9.5, 475, y + 1, 'Test Marks', 0.2, 0.25, 0.33);
+      y -= 20;
+
+      if (rows.length === 0) {
+        textOp('F1', 10, 48, y, 'Is mahine mein abhi koi entry log nahi hui hai.', 0.4, 0.45, 0.52);
+        y -= 22;
+      } else {
+        rows.forEach(r => {
+          nextPageIfNeeded(20);
+          textOp('F1', 9.5, 48, y, r.dateIso);
+          textOp('F1', 9.5, 160, y, r.tasks);
+          textOp('F1', 9.5, 280, y, r.hrs);
+          textOp('F1', 9.5, 390, y, r.wake);
+          textOp('F1', 9.5, 475, y, r.test);
+          y -= 17;
+        });
+      }
+
+      y -= 14;
+      nextPageIfNeeded(40);
+      const pendingBacklogs = state.backlogs.filter(b => !b.done);
+      const doneBacklogs = state.backlogs.filter(b => b.done);
+      textOp('F2', 11.5, 40, y, `Backlog Summary (${pendingBacklogs.length} Pending, ${doneBacklogs.length} Done)`);
+      y -= 18;
+
+      if (pendingBacklogs.length === 0) {
+        textOp('F1', 10, 48, y, 'Koi pending backlog nahi hai.', 0.4, 0.45, 0.52);
+      } else {
+        pendingBacklogs.forEach((b, idx) => {
+          nextPageIfNeeded(18);
+          textOp('F1', 9.5, 48, y, `${idx + 1}. [${b.subject}] ${b.text}`.slice(0, 92));
+          y -= 15;
+        });
+      }
+
+      const pdfBlob = buildSimplePdf(pages);
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      const mmStr = String(viewMonth + 1).padStart(2, '0');
+      a.download = `NURA_${tag}_Report_${viewYear}-${mmStr}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
+      const prevQuick = quickPdfBtn.innerHTML;
+      quickPdfBtn.innerHTML = '<span>&#10003; PDF</span>';
+      backupStatus.textContent = 'PDF report Downloads mein save ho gayi!';
+      setTimeout(() => {
+        quickPdfBtn.innerHTML = prevQuick;
+        backupStatus.textContent = '';
+      }, 2500);
+    }
+
+    pdfBtn.addEventListener('click', generatePdfReport);
+    quickPdfBtn.addEventListener('click', generatePdfReport);
+
+    importInput.addEventListener('change', e => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          state = {
+            examTag: typeof parsed.examTag === 'string' && parsed.examTag.trim() ? parsed.examTag.trim() : 'NEET',
+            maxTestMarks: Number(parsed.maxTestMarks) > 0 ? Number(parsed.maxTestMarks) : 720,
+            dailyTasks: parsed.dailyTasks || {},
+            dailyRoutine: parsed.dailyRoutine || {},
+            dailyRevTest: parsed.dailyRevTest || {},
+            backlogs: Array.isArray(parsed.backlogs) ? parsed.backlogs : [],
+            subjectTasks: parsed.subjectTasks || null,
+            routineItems: Array.isArray(parsed.routineItems) ? parsed.routineItems : null,
+            revTestItems: Array.isArray(parsed.revTestItems) ? parsed.revTestItems : null,
+            activeSubjects: parsed.activeSubjects || {},
+            subjects: normalizeSubjects(parsed.subjects),
+            taskTimes: parsed.taskTimes || {},
+            subjectTimes: parsed.subjectTimes || {},
+            lastBackupAt: parsed.lastBackupAt || null
+          };
+          saveState();
+          renderDaily();
+          renderBacklogs();
+          updateLastBackupLabel();
+          backupStatus.textContent = 'Backup restored!';
+          setTimeout(() => { backupStatus.textContent = ''; }, 3000);
+        } catch (err) {
+          backupStatus.textContent = 'Invalid backup file.';
+          setTimeout(() => { backupStatus.textContent = ''; }, 3000);
+        }
+      };
+      reader.readAsText(file);
+      importInput.value = '';
+    });
+
+    // Initial render
+    switchTab('today');
+    renderDaily();
+    renderBacklogs();
+    updateLastBackupLabel();
+
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
