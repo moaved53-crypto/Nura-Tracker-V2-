@@ -959,6 +959,17 @@
           <span id="rev-test-stats" class="stat-pill-rose">0/4 Ticked &bull; Test: -</span>
         </div>
 
+        <!-- Revision / Test Completion Bar -->
+        <div>
+          <div class="progress-meta">
+            <span style="font-weight:600; color:var(--slate-500);">Revision / Test Completion</span>
+            <span id="rev-test-progress-text" style="font-weight:700; color:var(--rose-700);">0 / 4 Completed (0%)</span>
+          </div>
+          <div class="progress-track">
+            <div id="rev-test-progress-bar" class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #e11d48 0%, #f59e0b 100%);"></div>
+          </div>
+        </div>
+
         <!-- Changeable Max Marks Setting -->
         <div class="max-marks-bar">
           <div style="font-weight:600; color:var(--rose-900);">
@@ -1331,6 +1342,8 @@
     const maxTestMarksInput = document.getElementById('max-test-marks-input');
     const revTestGrid = document.getElementById('rev-test-grid');
     const revTestStats = document.getElementById('rev-test-stats');
+    const revTestProgressText = document.getElementById('rev-test-progress-text');
+    const revTestProgressBar = document.getElementById('rev-test-progress-bar');
     const addRevTestForm = document.getElementById('add-rev-test-form');
     const newRevTestLabel = document.getElementById('new-rev-test-label');
     const newRevTestType = document.getElementById('new-rev-test-type');
@@ -1820,6 +1833,10 @@
       const marksEntry = getRevTestEntry(selectedDate, 'test_marks');
       const marksText = marksEntry.value !== '' ? `${marksEntry.value}/${maxMarks}` : '-';
       revTestStats.textContent = `${ticked}/${items.length} Ticked \u2022 Test: ${marksText}`;
+
+      const rtPct = items.length > 0 ? Math.round((ticked / items.length) * 100) : 0;
+      if (revTestProgressText) revTestProgressText.textContent = `${ticked} / ${items.length} Completed (${rtPct}%)`;
+      if (revTestProgressBar) revTestProgressBar.style.width = `${rtPct}%`;
     }
 
     function syncBacklogSubjectOptions(subjects) {
